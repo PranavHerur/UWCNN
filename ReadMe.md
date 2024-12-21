@@ -1,3 +1,5 @@
+I am updating this to use Tensorflow 2.X
+
 # Underwater Scene Prior Inspired Deep Underwater Image and Video Enhancement
 This repository is for Underwater Scene Prior Inspired Deep Underwater Image and Video Enhancement (UWCNN) introduced in the following paper
 

@@ -1,4 +1,14 @@
-I am updating this to use Tensorflow 2.X
+# This has been updated to use Tensorflow 2.18
+tested on:
+- Python 3.10
+- Tensorflow 2.18
+
+
+# Setup
+
+```
+pip install -r requirements.txt
+```
 
 # Underwater Scene Prior Inspired Deep Underwater Image and Video Enhancement
 This repository is for Underwater Scene Prior Inspired Deep Underwater Image and Video Enhancement (UWCNN) introduced in the following paper

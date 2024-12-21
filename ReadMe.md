@@ -10,6 +10,13 @@ tested on:
 pip install -r requirements.txt
 ```
 
+# Usage
+You'll want to update the checkpoint/checkpoint file to point to the model you want to use. It uses the last model in the file by default.
+```
+cd TestCode
+python main_test.py
+```
+
 # Underwater Scene Prior Inspired Deep Underwater Image and Video Enhancement
 This repository is for Underwater Scene Prior Inspired Deep Underwater Image and Video Enhancement (UWCNN) introduced in the following paper
 

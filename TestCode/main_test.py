@@ -6,7 +6,7 @@ import tensorflow as tf
 import pprint
 import os
 
-flags = tf.app.flags
+flags = tf.compat.v1.app.flags
 flags.DEFINE_integer("epoch", 120, "Number of epoch [120]")
 flags.DEFINE_integer("batch_size", 1, "The size of batch images [128]")
 flags.DEFINE_integer("image_height", 230, "The size of image to use [230]")
@@ -31,15 +31,18 @@ def main(_):
     os.makedirs(FLAGS.checkpoint_dir)
   if not os.path.exists(FLAGS.sample_dir):
     os.makedirs(FLAGS.sample_dir)
+    
+    
   filenames = os.listdir('test_real')
   data_dir = os.path.join(os.getcwd(), 'test_real')
   data = glob.glob(os.path.join(data_dir, "*.bmp"))
-  test_data_list = data + glob.glob(os.path.join(data_dir, "*.png"))
-
+  test_data_list = data + glob.glob(os.path.join(data_dir, "*.png")) + glob.glob(os.path.join(data_dir, "*.jpg"))
+  print(test_data_list)
+  
   for ide in range(0,len(test_data_list)):
     image_test =  get_image(test_data_list[ide],is_grayscale=False)
     shape = image_test.shape
-    with tf.Session() as sess:
+    with tf.compat.v1.Session() as sess:
       # with tf.device('/cpu:0'):
         srcnn = T_CNN(sess, 
                   image_height=shape[0],
@@ -52,9 +55,9 @@ def main(_):
                   sample_dir=FLAGS.sample_dir,
                   test_image_name = test_data_list[ide],
                   id = ide
-                  )
+                )
 
         srcnn.train(FLAGS)
         sess.close()
 if __name__ == '__main__':
-  tf.app.run()
+  tf.compat.v1.app.run()

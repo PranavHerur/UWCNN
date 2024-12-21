@@ -1,5 +1,5 @@
 from utils import ( 
-  imsave,
+  imsave_label,
   prepare_data
 )
 
@@ -42,15 +42,16 @@ class T_CNN(object):
     self.df_dim = 64
     self.checkpoint_dir = checkpoint_dir
     self.sample_dir = sample_dir
-
+    self.model_name = None
+    
     self.build_model()
 
   def build_model(self):
-    self.images = tf.placeholder(tf.float32, [self.batch_size, self.image_height, self.image_width, self.c_dim], name='images')
+    self.images = tf.compat.v1.placeholder(tf.float32, [self.batch_size, self.image_height, self.image_width, self.c_dim], name='images')
     self.pred_h = self.model()
 
 
-    self.saver = tf.train.Saver()
+    self.saver = tf.compat.v1.train.Saver()
     
   def train(self, config):
 
@@ -62,7 +63,7 @@ class T_CNN(object):
     expand_zero = np.zeros([self.batch_size-1,shape[0],shape[1],shape[2]])
     batch_test_image = np.append(expand_test,expand_zero,axis = 0)
 
-    tf.global_variables_initializer().run()
+    tf.compat.v1.global_variables_initializer().run()
     
     
     counter = 0
@@ -78,16 +79,20 @@ class T_CNN(object):
     for id in range(0,1):
 
         result_h0 = result_h[id,:,:,:].reshape(h , w , 3)
-        image_path0 = os.path.join(os.getcwd(), config.sample_dir)
+        image_path0 = os.path.join(os.getcwd(), self.sample_dir, self.model_name)
+        if not os.path.exists(image_path0):
+          os.makedirs(image_path0)
+
         final = (result_h0+1.)/2 
-        #image_path = os.path.join(image_path0, "%2dtest_dehaze.bmp"%(self.id))
-        image_path = os.path.join(image_path0, self.test_image_name+'_out.png')
-        imsave_lable(final, image_path)
+        filename = self.test_image_name.split('/')[-1]
+        image_path = os.path.join(image_path0, filename+'_out.png')
+        
+        imsave_label(final, image_path)
 
 
   def model(self):
 
-    with tf.variable_scope("model_h") as scope:
+    with tf.compat.v1.variable_scope("model_h") as scope:
         if self.id > 0: 
           scope.reuse_variables()
         image_conv1 = tf.nn.relu(conv2d(self.images, 16, k_h=3, k_w=3, d_h=1, d_w=1,name="conv2d_dehaze1"))
@@ -126,6 +131,7 @@ class T_CNN(object):
     ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
     if ckpt and ckpt.model_checkpoint_path:
         ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
+        self.model_name = ckpt_name
         self.saver.restore(self.sess, os.path.join(checkpoint_dir, ckpt_name))
         return True
     else:
